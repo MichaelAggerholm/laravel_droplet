@@ -6,8 +6,17 @@
 
         <title>Laravel</title>
 
+
     </head>
     <body class="antialiased">
         <h1>Hello from droplet</h1>
+
+        <div id="app">
+            <example-component>
+
+            </example-component>
+        </div>
+
+        <script src="{{ mix('/js/app.js') }}"></script>
     </body>
 </html>
