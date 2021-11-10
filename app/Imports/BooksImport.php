@@ -4,9 +4,11 @@ namespace App\Imports;
 
 use App\Models\Book;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithUpserts;
 
-class BooksImport implements ToModel, WithHeadingRow
+class BooksImport implements ToModel, WithHeadingRow, WithBatchInserts, WithUpserts
 {
     /**
     * @param array $row
@@ -22,5 +24,15 @@ class BooksImport implements ToModel, WithHeadingRow
             'format'        => $row['format'],
             'price'         => $row['price'],
         ]);
+    }
+
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+
+    public function uniqueBy()
+    {
+        return 'supplierId';
     }
 }

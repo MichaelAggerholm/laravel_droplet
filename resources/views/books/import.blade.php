@@ -4,7 +4,8 @@
     <div class="row">
         <div class="col-lg-12 margin-tb">
             <div class="pull-left">
-                <h2>Import books</h2>
+                <h2>Importer books fra CSV fil.</h2>
+                <p>OBS! hvis supplierId allerede findes, opdateres bogen i stedet!! (pas på ikke at overskrive)..</p>
             </div>
             <div class="pull-right">
                 <a class="btn btn-primary" href="{{ route('books.index') }}"> Back</a>
