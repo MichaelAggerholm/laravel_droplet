@@ -17,4 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/booksimport', [\App\Http\Controllers\BookController::class, 'import']);
+Route::get('import', [\App\Http\Controllers\BookController::class, 'importForm']);
+Route::post('import', [\App\Http\Controllers\BookController::class, 'import'])->name('import');
+Route::resource('books', \App\Http\Controllers\BookController::class);

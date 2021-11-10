@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\BooksImport;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
@@ -17,7 +18,8 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+        $books = DB::select('select * from books');
+        return view('books.index',['books'=>$books]);
     }
 
     /**
@@ -27,7 +29,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        return view('books.create');
     }
 
     /**
@@ -38,7 +40,18 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'supplierId' => 'required',
+            'title' => 'required',
+            'author' => 'required',
+            'format' => 'required',
+            'price' => 'required',
+        ]);
+
+        Product::create($request->all());
+
+        return redirect()->route('books.index')
+            ->with('success','Book created successfully.');
     }
 
     /**
@@ -49,7 +62,7 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        //
+        return view('books.show',compact('book'));
     }
 
     /**
@@ -60,41 +73,64 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        //
+        return view('books.edit',compact('book'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Book  $book
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\Book $book
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Book $book)
     {
-        //
+        $request->validate([
+            'supplierId' => 'required',
+            'title' => 'required',
+            'author' => 'required',
+            'format' => 'required',
+            'price' => 'required',
+        ]);
+
+        $book->update($request->all());
+
+        return redirect()->route('books.index')
+            ->with('success','Book updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Book  $book
+     * @param  \App\Models\Book $book
      * @return \Illuminate\Http\Response
      */
     public function destroy(Book $book)
     {
-        //
+        $book->delete();
+
+        return redirect()->route('books.index')
+            ->with('success','Book deleted successfully');
     }
 
-    public function import()
+    public function importForm()
     {
-        try {
-            Excel::import(new BooksImport, 'files/booklist.csv');
+        return view('books.import');
+    }
 
-            return redirect('/')->with('success', 'All good!');
+    public function import(Request $request)
+    {
+        if ($request->hasFile('importFile')) {
+            if ($request->file('importFile')->isValid()) {
+                try {
+                    Excel::import(new BooksImport, $request->importFile);
 
-        } catch (\Illuminate\Database\QueryException $e) {
-            var_dump($e->errorInfo);
+                    return redirect('/')->with('success', 'Your file is imported successfully in database.');
+
+                } catch (\Illuminate\Database\QueryException $e) {
+                    var_dump($e->errorInfo);
+                }
+            }
         }
     }
 }

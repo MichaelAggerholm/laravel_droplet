@@ -15,8 +15,6 @@ class BooksImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-//        dd($row);
-
         return new Book([
             'supplierId'    => 'booklist' . $row['id'],
             'title'         => $row['title'],
@@ -24,7 +22,5 @@ class BooksImport implements ToModel, WithHeadingRow
             'format'        => $row['format'],
             'price'         => $row['price'],
         ]);
-
-        dd($row);
     }
 }
