@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\ImportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +18,8 @@ use App\Http\Controllers\BookController;
 Route::get('/', [BookController::class, 'index']);
 
 // Books CRUD routes.
-Route::resource('books', \App\Http\Controllers\BookController::class);
+Route::resource('books', BookController::class);
 
 // Importer routes
-Route::get('import', [\App\Http\Controllers\ImportController::class, 'importForm']);
-Route::post('import', [\App\Http\Controllers\ImportController::class, 'import'])->name('import');
+Route::get('import', [ImportController::class, 'importForm']);
+Route::post('import', [ImportController::class, 'import'])->name('import');
