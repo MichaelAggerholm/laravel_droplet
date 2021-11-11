@@ -5,10 +5,11 @@ namespace App\Imports;
 use App\Models\Book;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 
-class BooksImport implements ToModel, WithHeadingRow, WithBatchInserts, WithUpserts
+class BooksImport implements ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading, WithUpserts
 {
     /**
     * @param array $row
@@ -27,10 +28,15 @@ class BooksImport implements ToModel, WithHeadingRow, WithBatchInserts, WithUpse
         ]);
     }
 
-    // Reads in batches and inserts each completed 1000 books, like a SAX parser could.
+    // Reads in batches and inserts as chunks for each 100 books, like a SAX parser would.
     public function batchSize(): int
     {
-        return 1000;
+        return 100;
+    }
+
+    public function chunkSize(): int
+    {
+        return 100;
     }
 
     // If the unique supplierId already exists, the book will instead update.

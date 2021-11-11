@@ -54,6 +54,6 @@
         @endforeach
     </table>
 
-{{--    {!! $products->links() !!}--}}
+    {{$books->links("pagination::bootstrap-4")}}
 
 @endsection
