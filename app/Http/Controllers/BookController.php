@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Imports\BooksImport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
 
@@ -18,6 +17,7 @@ class BookController extends Controller
      */
     public function index()
     {
+        // get all books from database table
         $books = DB::select('select * from books');
         return view('books.index',['books'=>$books]);
     }
@@ -40,6 +40,7 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
+        // Create new book
         $request->validate([
             'supplierId' => 'required',
             'title' => 'required',
@@ -48,10 +49,15 @@ class BookController extends Controller
             'price' => 'required',
         ]);
 
-        Product::create($request->all());
+        try {
+            Book::create($request->all());
 
-        return redirect()->route('books.index')
-            ->with('success','Book created successfully.');
+            return redirect()->route('books.index')
+                ->with('success','Book created successfully.');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            var_dump($e->errorInfo);
+        }
     }
 
     /**
@@ -62,6 +68,7 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
+        // Show details on a specific book
         return view('books.show',compact('book'));
     }
 
@@ -73,6 +80,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
+        // Edit a specific book
         return view('books.edit',compact('book'));
     }
 
@@ -85,6 +93,7 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
+        // Update book in the database table
         $request->validate([
             'supplierId' => 'required',
             'title' => 'required',
@@ -107,30 +116,10 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
+        // Delete a specific book
         $book->delete();
 
         return redirect()->route('books.index')
             ->with('success','Book deleted successfully');
-    }
-
-    public function importForm()
-    {
-        return view('books.import');
-    }
-
-    public function import(Request $request)
-    {
-        if ($request->hasFile('importFile')) {
-            if ($request->file('importFile')->isValid()) {
-                try {
-                    Excel::import(new BooksImport, $request->importFile);
-
-                    return redirect('/')->with('success', 'Your file is imported successfully in database.');
-
-                } catch (\Illuminate\Database\QueryException $e) {
-                    var_dump($e->errorInfo);
-                }
-            }
-        }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,10 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [BookController::class, 'index']);
 
-Route::get('import', [\App\Http\Controllers\BookController::class, 'importForm']);
-Route::post('import', [\App\Http\Controllers\BookController::class, 'import'])->name('import');
+// Books CRUD routes.
 Route::resource('books', \App\Http\Controllers\BookController::class);
+
+// Importer routes
+Route::get('import', [\App\Http\Controllers\ImportController::class, 'importForm']);
+Route::post('import', [\App\Http\Controllers\ImportController::class, 'import'])->name('import');

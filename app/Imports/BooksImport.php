@@ -15,8 +15,9 @@ class BooksImport implements ToModel, WithHeadingRow, WithBatchInserts, WithUpse
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
-    public function model(array $row)
+    public function model(array $row) // Expects a row of inputs
     {
+        // Maps the rows from the csv / exsl to the database table
         return new Book([
             'supplierId'    => 'booklist' . $row['id'],
             'title'         => $row['title'],
@@ -26,11 +27,13 @@ class BooksImport implements ToModel, WithHeadingRow, WithBatchInserts, WithUpse
         ]);
     }
 
+    // Reads in batches and inserts each completed 1000 books, like a SAX parser could.
     public function batchSize(): int
     {
         return 1000;
     }
 
+    // If the unique supplierId already exists, the book will instead update.
     public function uniqueBy()
     {
         return 'supplierId';
