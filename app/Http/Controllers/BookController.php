@@ -17,10 +17,6 @@ class BookController extends Controller
      */
     public function index()
     {
-        // get all books from database table
-//        $books = DB::select('select * from books');
-//        return view('books.index',['books'=>$books]);
-
         return view('books.index', [
             'books' => DB::table('books')->paginate(15)
         ]);
